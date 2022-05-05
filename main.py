@@ -50,22 +50,22 @@ class AccelData(tk.Toplevel):
             tk.Label(win, text="mV/g").grid(column=4, row=i+1, padx=5, pady=5)
 
         self.chkCh1 = tk.Checkbutton(win, fg="green", text="Enabled",
-                                     command=lambda: self.cb_check(self.chkCh1, self.controller.chbox_val1),
-                                     variable=self.controller.chbox_val1)
+                                     command=lambda: self.cb_check(self.chkCh1, self.controller.chbox_val[0]),
+                                     variable=self.controller.chbox_val[0])
         self.chkCh1.grid(column=1, row=1, padx=5, pady=5)
         self.chkCh1.select()
         self.chkCh2 = tk.Checkbutton(win, fg="green", text="Enabled",
-                                     command=lambda: self.cb_check(self.chkCh2, self.controller.chbox_val2),
-                                     variable=self.controller.chbox_val2)
+                                     command=lambda: self.cb_check(self.chkCh2, self.controller.chbox_val[1]),
+                                     variable=self.controller.chbox_val[1])
         self.chkCh2.grid(column=1, row=2, padx=5, pady=5)
         self.chkCh2.select()
         self.chkCh3 = tk.Checkbutton(win, fg="red", text="Disabled",
-                                     command=lambda: self.cb_check(self.chkCh3, self.controller.chbox_val3),
-                                     variable=self.controller.chbox_val3)
+                                     command=lambda: self.cb_check(self.chkCh3, self.controller.chbox_val[2]),
+                                     variable=self.controller.chbox_val[2])
         self.chkCh3.grid(column=1, row=3, padx=5, pady=5)
         self.chkCh4 = tk.Checkbutton(win, fg="red", text="Disabled",
-                                     command=lambda: self.cb_check(self.chkCh4, self.controller.chbox_val4),
-                                     variable=self.controller.chbox_val4)
+                                     command=lambda: self.cb_check(self.chkCh4, self.controller.chbox_val[3]),
+                                     variable=self.controller.chbox_val[3])
         self.chkCh4.grid(column=1, row=4, padx=5, pady=5)
 
         # ROW 5 ________________________________________
@@ -97,11 +97,15 @@ class App(tk.Tk):
         self.frames = {"MainFrame": MainPage(container, self)}
         self.frames["MainFrame"].pack(side="top", fill="both", expand=True)
 
+        #############################
         # Variable Controller
-        self.chbox_val1 = tk.IntVar()
-        self.chbox_val2 = tk.IntVar()
-        self.chbox_val3 = tk.IntVar()
-        self.chbox_val4 = tk.IntVar()
+        #############################
+
+        # Checkbox values from AccelData()
+        self.chbox_val = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
+        # Entry values from AccelData()
+
+        #self.chbox_int = [self.chbox_val[0].get(), self.chbox_val[1].get(), self.chbox_val[2].get(), self.chbox_val[3].get()]
 
 
 if __name__ == "__main__":
