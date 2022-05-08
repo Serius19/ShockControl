@@ -18,35 +18,35 @@ def read_csv_file():
 
 def read_csv_data(filename):
     df = pd.read_csv(filename, skiprows=[0])
-    print(df)
     header = df.columns
-    print(header)
-    t_step = float(header[-1])
-    print(t_step)
 
+    t_step = float(header[-1])
     seq = df.Sequence.to_numpy()
     t = seq*t_step
-    print(seq)
 
     ch1_volt = df.Volt.to_numpy()
-    print(ch1_volt)
+    ch2_volt = 0
+    ch3_volt = 0
+    ch4_volt = 0
 
     if len(df.columns) == 5:
         df.columns = ["Sequence", "Volt", "Volt2", "NAN", "NAN"]
         ch2_volt = df.Volt2.to_numpy()
-        print(ch2_volt)
+
     elif len(df.columns) == 6:
         df.columns = ["Sequence", "Volt", "Volt2", "Volt3", "NAN", "NAN"]
         ch2_volt = df.Volt2.to_numpy()
-        print(ch2_volt)
         ch3_volt = df.Volt3.to_numpy()
-        print(ch3_volt)
+
     elif len(df.columns) == 7:
         df.columns = ["Sequence", "Volt", "Volt2", "Volt3", "Volt4", "NAN", "NAN"]
         ch2_volt = df.Volt2.to_numpy()
-        print(ch2_volt)
         ch3_volt = df.Volt3.to_numpy()
-        print(ch3_volt)
         ch4_volt = df.Volt4.to_numpy()
-        print(ch4_volt)
 
+    print(ch1_volt)
+    print(ch2_volt)
+    print(ch3_volt)
+    print(ch4_volt)
+
+    return t, ch1_volt, ch2_volt, ch3_volt, ch4_volt

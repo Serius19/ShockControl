@@ -114,16 +114,25 @@ class AccelData(tk.Toplevel):
             if self.controller.chbox_val[3].get() == 1:
                 self.controller.sens_val[3] = float(self.entCh4.get())
 
+            filename = read_csv_file()
+
+            t, ch1_volt, ch2_volt, ch3_volt, ch4_volt = read_csv_data(filename)
+
+            self.controller.time = t
+            self.controller.ch1 = ch1_volt/self.controller.sens_val[0] ^ -2
+            self.controller.ch2 = ch2_volt / self.controller.sens_val[1] ^ -2
+            self.controller.ch3 = ch3_volt / self.controller.sens_val[2] ^ -2
+            self.controller.ch4 = ch4_volt / self.controller.sens_val[3] ^ -2
+
+            print(self.controller.time)
+            print(self.controller.ch1)
+            print(self.controller.ch2)
+            self.controller.bool_imported = True
+            self.destroy()
+
         except Exception as e:
             print(e)
             pass
-
-        filename = read_csv_file()
-        print(filename)
-        read_csv_data(filename)
-
-        self.controller.bool_imported = True
-        self.destroy()
 
 
 class App(tk.Tk):
@@ -152,6 +161,13 @@ class App(tk.Tk):
         self.sens_val = np.zeros(4, dtype=float)
         # File imported boolean
         self.bool_imported = False
+
+        # Time domain
+        self.time = []
+        self.ch1 = []
+        self.ch2 = []
+        self.ch3 = []
+        self.ch4 = []
 
 
 if __name__ == "__main__":
