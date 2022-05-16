@@ -68,7 +68,7 @@ def save_file():
 def write2txt(file, a):
     try:
         np.savetxt(file, a, delimiter="\t", fmt="%5.10f")
-
+        file.close()
     except Exception as e:
         messagebox.showerror(title="Error", message=str(e))
         return
