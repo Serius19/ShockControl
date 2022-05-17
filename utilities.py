@@ -72,4 +72,3 @@ def write2txt(file, a):
     except Exception as e:
         messagebox.showerror(title="Error", message=str(e))
         return
-

@@ -9,6 +9,7 @@ from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 
 from acceldata import AccelData
+from srs import Srs
 from utilities import save_file, write2txt
 
 
@@ -28,14 +29,23 @@ class MainPage(tk.Frame):
         lbl_plot = tk.Label(self, text="Plot data:")
         lbl_plot.grid(row=2, column=0, padx=5, pady=2, sticky="W")
 
-        self.plot = tk.Button(self, command=lambda: MainPlot.update_plot(self.controller.app2),  text="Plot", padx=5, pady=5)
-        self.plot.grid(row=3, column=0, padx=5, pady=5)
+        self.btn_plot = tk.Button(self, state="disabled", command=lambda: MainPlot.update_plot(self.controller.app2),
+                                  text="Plot", padx=5, pady=5)
+        self.btn_plot.grid(row=3, column=0, padx=5, pady=5)
 
         lbl_export = tk.Label(self, text="Export time vs acceleration data:")
         lbl_export.grid(row=4, column=0, padx=5, pady=2, sticky="W")
 
-        self.btn_export_txt = tk.Button(self, state="disabled", command=self.export_txt_click,  text="Export Data", padx=5, pady=5)
+        self.btn_export_txt = tk.Button(self, state="disabled", command=self.export_txt_click,  text="Export Data",
+                                        padx=5, pady=5)
         self.btn_export_txt.grid(row=5, column=0, padx=5, pady=5)
+
+        lbl_srs = tk.Label(self, text="Calc SRS:")
+        lbl_srs.grid(row=6, column=0, padx=5, pady=2, sticky="W")
+
+        self.btn_srs = tk.Button(self, state="normal", command=self.srs_click, text="Calculate SRS",
+                                 padx=5, pady=5)
+        self.btn_srs.grid(row=7, column=0, padx=5, pady=5)
 
     def import_click(self):
         import_win = AccelData(self, self.controller)
@@ -46,12 +56,18 @@ class MainPage(tk.Frame):
         else:
             self.btn_import.config(state="disabled")
             self.btn_export_txt.config(state="normal")
+            self.btn_plot.config(state="normal")
+            self.btn_srs.config(state="normal")
             tk.messagebox.showinfo(title="Info", message="File imported successfully!")
 
     def export_txt_click(self):
         file = save_file()
         write2txt(file, self.controller.channels_accel)
         tk.messagebox.showinfo(title="Info", message="File exported successfully!")
+
+    def srs_click(self):
+        srs_win = Srs(self, self.controller)
+        self.wait_window(srs_win)
 
 
 class MainPlot(tk.Frame):
@@ -71,7 +87,6 @@ class MainPlot(tk.Frame):
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
         self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
-        print("plot created")
 
     def update_plot(self):
         for i in range(1, 4):
@@ -106,13 +121,15 @@ class App(tk.Tk):
         self.chbox_val = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
         # Sensitivity values from AccelData()
         self.sens_val = np.array((10, 10, 0, 0), dtype=float)
-        # File imported boolean
+        # Oscilloscope file imported boolean
         self.bool_imported = False
-
         # time and voltage from oscilloscope
         self.channels_volt = []
         # time and channels from oscilloscope
         self.channels_accel = []
+        # frequency array
+        self.fn = []
+        self.a_abs = []
 
 
 if __name__ == "__main__":
