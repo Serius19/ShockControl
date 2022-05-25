@@ -20,32 +20,36 @@ class MainPage(tk.Frame):
         self.controller = controller
 
         # Widgets
-        lbl_import = tk.Label(self, text="Import Oscilloscope File:")
-        lbl_import.grid(row=0, column=0, padx=5, pady=2, sticky="W")
+        lbl_import = tk.Label(self, text="Import Oscilloscope Data:")
+        lbl_import.grid(row=0, column=0, columnspan=2, padx=5, pady=2, sticky=tk.W)
 
-        self.btn_import = tk.Button(self, command=self.import_click, text="Read Data", padx=5, pady=5)
-        self.btn_import.grid(row=1, column=0, padx=5, pady=5)
+        self.btn_import = tk.Button(self, command=self.import_click, text="Read", padx=5, pady=5, width=7)
+        self.btn_import.grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
 
-        lbl_plot = tk.Label(self, text="Plot data:")
-        lbl_plot.grid(row=2, column=0, padx=5, pady=2, sticky="W")
+        self.btn_connect = tk.Button(self, text="Connect", state="disabled", padx=5, pady=5, width=7)
+        self.btn_connect.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
+
+        lbl_plot = tk.Label(self, text="Plot Time Data:")
+        lbl_plot.grid(row=2, column=0, columnspan=2, padx=5, pady=2, sticky=tk.W)
 
         self.btn_plot = tk.Button(self, state="disabled", command=lambda: MainPlot.update_plot(self.controller.app2),
-                                  text="Plot", padx=5, pady=5)
-        self.btn_plot.grid(row=3, column=0, padx=5, pady=5)
+                                  text="Plot", padx=5, pady=5, width=7)
+        self.btn_plot.grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
 
-        lbl_export = tk.Label(self, text="Export time vs acceleration data:")
-        lbl_export.grid(row=4, column=0, padx=5, pady=2, sticky="W")
+        self.btn_export_time = tk.Button(self, state="disabled", command=self.export_txt_click, text="Export",
+                                         padx=5, pady=5, width=7)
+        self.btn_export_time.grid(row=3, column=1, padx=10, pady=5)
 
-        self.btn_export_txt = tk.Button(self, state="disabled", command=self.export_txt_click,  text="Export Data",
-                                        padx=5, pady=5)
-        self.btn_export_txt.grid(row=5, column=0, padx=5, pady=5)
+        lbl_srs = tk.Label(self, text="Calculate SRS (CH1):")
+        lbl_srs.grid(row=4, column=0, columnspan=2, padx=5, pady=2, sticky=tk.W)
 
-        lbl_srs = tk.Label(self, text="Calc SRS:")
-        lbl_srs.grid(row=6, column=0, padx=5, pady=2, sticky="W")
+        self.btn_srs = tk.Button(self, state="disabled", command=self.srs_click, text="SRS",
+                                 padx=5, pady=5, width=7)
+        self.btn_srs.grid(row=5, column=0, padx=10, pady=5)
 
-        self.btn_srs = tk.Button(self, state="normal", command=self.srs_click, text="Calculate SRS",
-                                 padx=5, pady=5)
-        self.btn_srs.grid(row=7, column=0, padx=5, pady=5)
+        self.btn_export_srs = tk.Button(self, state="disabled", command=self.export_srs_click, text="Export",
+                                        padx=5, pady=5, width=7)
+        self.btn_export_srs.grid(row=5, column=1, padx=10, pady=5)
 
     def import_click(self):
         import_win = AccelData(self, self.controller)
@@ -55,7 +59,7 @@ class MainPage(tk.Frame):
             pass
         else:
             self.btn_import.config(state="disabled")
-            self.btn_export_txt.config(state="normal")
+            self.btn_export_time.config(state="normal")
             self.btn_plot.config(state="normal")
             self.btn_srs.config(state="normal")
             tk.messagebox.showinfo(title="Info", message="File imported successfully!")
@@ -63,11 +67,19 @@ class MainPage(tk.Frame):
     def export_txt_click(self):
         file = save_file()
         write2txt(file, self.controller.channels_accel)
-        tk.messagebox.showinfo(title="Info", message="File exported successfully!")
+        tk.messagebox.showinfo(title="Info", message="Time Data vs Acceleration exported successfully!")
 
     def srs_click(self):
         srs_win = Srs(self, self.controller)
         self.wait_window(srs_win)
+        self.btn_export_srs.config(state="normal")
+
+    def export_srs_click(self):
+        file = save_file()
+        a = np.vstack((self.controller.fn, self.controller.a_abs))
+        a = np.transpose(a)
+        write2txt(file, a)
+        tk.messagebox.showinfo(title="Info", message="SRS exported successfully!")
 
 
 class MainPlot(tk.Frame):
@@ -86,7 +98,7 @@ class MainPlot(tk.Frame):
 
         self.toolbar = NavigationToolbar2Tk(self.canvas, self)
         self.toolbar.update()
-        self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
+        self.toolbar.pack(side="top", fill="both", expand=True)
 
     def update_plot(self):
         for i in range(1, 4):
@@ -110,8 +122,9 @@ class App(tk.Tk):
 
         self.app1 = MainPage(container, self)
         self.app2 = MainPlot(container, self)
-        self.app1.grid(column=0, row=0, padx=5, pady=5)
-        self.app2.grid(column=1, row=0, padx=5, pady=5)
+        self.app1.pack(side="left", fill="y", expand=False)
+        self.app2.pack(side="right", fill="both", expand=True)
+
 
         #############################
         # Variable Controller

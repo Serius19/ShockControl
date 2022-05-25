@@ -97,6 +97,8 @@ class Srs(tk.Toplevel):
         ax.grid()
         fig.show()
 
+        self.destroy()
+
     def srs_accel(self, num_fn, omega, damp):
         # a_pos = np.zeros(num_fn, dtype=float)
         # a_neg = np.zeros(num_fn, dtype=float)
