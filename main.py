@@ -29,7 +29,7 @@ class MainPage(tk.Frame):
         self.btn_connect = tk.Button(self, text="Connect", state="disabled", padx=5, pady=5, width=7)
         self.btn_connect.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
 
-        lbl_plot = tk.Label(self, text="Plot Time Data:")
+        lbl_plot = tk.Label(self, text="Time Data:")
         lbl_plot.grid(row=2, column=0, columnspan=2, padx=5, pady=2, sticky=tk.W)
 
         self.btn_plot = tk.Button(self, state="disabled", command=lambda: MainPlot.update_plot(self.controller.app2),
@@ -43,7 +43,7 @@ class MainPage(tk.Frame):
         lbl_srs = tk.Label(self, text="Calculate SRS (CH1):")
         lbl_srs.grid(row=4, column=0, columnspan=2, padx=5, pady=2, sticky=tk.W)
 
-        self.btn_srs = tk.Button(self, state="disabled", command=self.srs_click, text="SRS",
+        self.btn_srs = tk.Button(self, state="normal", command=self.srs_click, text="SRS",
                                  padx=5, pady=5, width=7)
         self.btn_srs.grid(row=5, column=0, padx=10, pady=5)
 
@@ -89,7 +89,7 @@ class MainPlot(tk.Frame):
         self.controller = controller
 
         self.fig, self.ax = plt.subplots()
-        self.ax.set(xlabel='time (ms)', ylabel='Acceleration (gn)',
+        self.ax.set(xlabel='Time (s)', ylabel='Acceleration (gn)',
                     title='Acceleration vs Time')
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self)
@@ -124,7 +124,6 @@ class App(tk.Tk):
         self.app2 = MainPlot(container, self)
         self.app1.pack(side="left", fill="y", expand=False)
         self.app2.pack(side="right", fill="both", expand=True)
-
 
         #############################
         # Variable Controller

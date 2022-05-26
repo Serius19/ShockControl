@@ -63,6 +63,31 @@ class Srs(tk.Toplevel):
 
         # ROW 6 ________________________________________
         crow = 6
+        self.cb_val = tk.IntVar()
+        self.checkbox = tk.Checkbutton(win, text="Enable Limits",
+                                       command=lambda: self.cb_check(),
+                                       variable=self.cb_val)
+        self.checkbox.grid(row=crow, column=0, columnspan=2, padx=5, pady=(5, 0))
+
+        # ROW 7 ________________________________________
+        crow = 7
+        tk.Label(win, text="t1 (s):").grid(column=0, row=crow, padx=5, pady=(5, 0))
+        tk.Label(win, text="t2 (s):").grid(column=1, row=crow, padx=5, pady=(5, 0))
+
+        # ROW 8 ________________________________________
+        crow = 8
+        self.t1 = tk.StringVar()
+        self.t1.set("0")
+        self.t1 = tk.Entry(win, width=7, state="disabled", textvariable=self.t1)
+        self.t1.grid(row=crow, column=0, padx=5, pady=(2, 10))
+
+        self.t2 = tk.StringVar()
+        self.t2.set(str(self.controller.channels_accel[-1, 0]))
+        self.t2 = tk.Entry(win, width=7, state="disabled", textvariable=self.t2)
+        self.t2.grid(row=crow, column=1, padx=5, pady=(2, 10))
+
+        # ROW 9 ________________________________________
+        crow = 9
         self.btn_calc = tk.Button(win, text="Calculate", command=self.calculate)
         self.btn_calc.grid(row=crow, column=0, columnspan=2, padx=5, pady=(10, 10))
 
@@ -81,12 +106,10 @@ class Srs(tk.Toplevel):
         self.controller.fn[0] = f1
         for i in range(1, num_fn):
             self.controller.fn[i] = self.controller.fn[i-1]*(2.**octave)
-        print(self.controller.fn)
 
         omega = 2*np.pi*self.controller.fn
 
         self.controller.a_abs = self.srs_accel(num_fn, omega, damp)
-        print(self.controller.a_abs)
 
         fig, ax = plt.subplots()
         ax.plot(self.controller.fn, self.controller.a_abs)
@@ -130,3 +153,11 @@ class Srs(tk.Toplevel):
             a_abs[j] = max(abs(resp))
 
         return a_abs
+
+    def cb_check(self):
+        if self.cb_val.get() == 1:
+            self.t1.config(state="normal")
+            self.t2.config(state="normal")
+        else:
+            self.t1.config(state="disabled")
+            self.t2.config(state="disabled")
