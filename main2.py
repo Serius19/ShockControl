@@ -1,7 +1,16 @@
 import tkinter as tk
+from tkinter import messagebox
+
 import numpy as np
+
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+
+from acceldata import AccelData
+from srs import Srs
+from utilities import save_file, write2txt
 
 
 class MainPage(tk.Frame):
@@ -71,6 +80,31 @@ class MainPage(tk.Frame):
         a = np.transpose(a)
         write2txt(file, a)
         tk.messagebox.showinfo(title="Info", message="SRS exported successfully!")
+
+
+class MainPlot(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.controller = controller
+
+        self.fig, self.ax = plt.subplots()
+        self.ax.set(xlabel='Time (s)', ylabel='Acceleration (gn)',
+                    title='Acceleration vs Time')
+
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
+
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self)
+        self.toolbar.update()
+        self.toolbar.pack(side="top", fill="both", expand=True)
+
+    def update_plot(self):
+        for i in range(1, 4):
+            if self.controller.chbox_val[i-1].get() == 1:
+                self.ax.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, i])
+        self.canvas.draw()
 
 
 class App(tk.Tk):

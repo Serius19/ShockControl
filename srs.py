@@ -2,6 +2,7 @@ import tkinter as tk
 import numpy as np
 from scipy.signal import lfilter
 import matplotlib.pyplot as plt
+from tkinter import messagebox
 
 
 class Srs(tk.Toplevel):
@@ -13,6 +14,10 @@ class Srs(tk.Toplevel):
         self.title("Calculate SRS")
         self.resizable(False, False)
         self.grab_set()
+
+        self.arr = []
+        self.start = []
+        self.end = []
 
         win = tk.Frame(self)
         win.pack(side="top", fill="both", expand=True)
@@ -97,6 +102,9 @@ class Srs(tk.Toplevel):
         f1 = float(self.f1.get())
         f2 = float(self.f2.get())
 
+        self.t1 = float(self.t1.get())
+        self.t2 = float(self.t2.get())
+
         num, dem = self.Octr.get().split("/")
         octave = float(num)/float(dem)
 
@@ -132,6 +140,21 @@ class Srs(tk.Toplevel):
 
         dt = self.controller.channels_accel[1, 0] - self.controller.channels_accel[0, 0]
 
+        if self.cb_val.get() == 1:
+            print(self.t1)
+            print(self.t2)
+            for i in range(len(self.controller.channels_accel[:, 0])):
+                if self.controller.channels_accel[i, 0] >= self.t1:
+                    self.start = i-1
+                    break
+            for j in range(len(self.controller.channels_accel[:, 0])):
+                if self.controller.channels_accel[j, 0] >= self.t2:
+                    self.end = j
+                    break
+            self.arr = self.controller.channels_accel[self.start:self.end, 1]
+        else:
+            self.arr = self.controller.channels_accel[:, 1]
+
         for j in range(0, int(num_fn)):
             omegad = omega[j] * np.sqrt(1. - (damp ** 2))
 
@@ -149,7 +172,7 @@ class Srs(tk.Toplevel):
             bc[1] = 2. * (sp - c)
             bc[2] = e ** 2 - sp
 
-            resp = lfilter(bc, ac, self.controller.channels_accel[:, 1], axis=-1, zi=None)
+            resp = lfilter(bc, ac, self.arr, axis=-1, zi=None)
             a_abs[j] = max(abs(resp))
 
         return a_abs
