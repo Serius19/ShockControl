@@ -2,7 +2,6 @@ import tkinter as tk
 import numpy as np
 from scipy.signal import lfilter
 import matplotlib.pyplot as plt
-from tkinter import messagebox
 
 
 class Srs(tk.Toplevel):
@@ -131,8 +130,6 @@ class Srs(tk.Toplevel):
         self.destroy()
 
     def srs_accel(self, num_fn, omega, damp):
-        # a_pos = np.zeros(num_fn, dtype=float)
-        # a_neg = np.zeros(num_fn, dtype=float)
         a_abs = np.zeros(num_fn, dtype=float)
 
         ac = np.zeros(3)

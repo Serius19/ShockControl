@@ -24,21 +24,17 @@ class AccelData(tk.Toplevel):
         self.lblImport.grid(column=0, columnspan=5, row=crow, padx=5, pady=2)
 
         # ROW 1-4 ______________________________________
-
         self.entries = [tk.Entry(), tk.Entry(), tk.Entry(), tk.Entry()]
         self.checkboxes = [tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton()]
 
         for i in range(0, 4):
             lbl_ch = tk.Label(win, text="CH" + str(i + 1) + ":")
             lbl_ch.grid(column=0, row=i + 1, padx=5, pady=5)
-
             self.entries[i] = tk.Entry(win, width=10)
             self.entries[i].grid(column=3, row=i + 1, padx=5, pady=5)
             self.entries[i].insert(-1, str(self.controller.sens_val[i]))
-
             tk.Label(win, text="Sensitivity:").grid(column=2, row=i + 1, padx=5, pady=5)
             tk.Label(win, text="mV/g").grid(column=4, row=i + 1, padx=5, pady=5)
-
             self.checkboxes[i] = tk.Checkbutton(win, fg="green", text="Enabled",
                                                 command=lambda: self.cb_check(),
                                                 variable=self.controller.chbox_val[i])

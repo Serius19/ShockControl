@@ -1,39 +1,36 @@
 import tkinter as tk
 from tkinter import messagebox
 import numpy as np
-from utilities import read_csv_data, read_csv_file
+from matplotlib import pyplot as plt
+from utilities import read_csv_file, read_csv_data
 
 
 class ImportPage(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.parent = parent
         self.controller = controller
 
+        self.initialize_widgets()
 
-        # Widgets
+    def initialize_widgets(self):
         # ROW 0 ________________________________________
         crow = 0
         self.lblImport = tk.Label(self, text="Accelerometer parameters:")
         self.lblImport.grid(column=0, columnspan=5, row=crow, padx=5, pady=2)
 
         # ROW 1-4 ______________________________________
-
         self.entries = [tk.Entry(), tk.Entry(), tk.Entry(), tk.Entry()]
         self.checkboxes = [tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton()]
 
         for i in range(0, 4):
             lbl_ch = tk.Label(self, text="CH" + str(i + 1) + ":")
             lbl_ch.grid(column=0, row=i + 1, padx=5, pady=5)
-
             self.entries[i] = tk.Entry(self, width=10)
             self.entries[i].grid(column=3, row=i + 1, padx=5, pady=5)
-            # self.entries[i].insert(-1, str(self.controller.sens_val[i]))
-
+            self.entries[i].insert(-1, str(self.controller.sens_val[i]))
             tk.Label(self, text="Sensitivity:").grid(column=2, row=i + 1, padx=5, pady=5)
             tk.Label(self, text="mV/g").grid(column=4, row=i + 1, padx=5, pady=5)
-
             self.checkboxes[i] = tk.Checkbutton(self, fg="green", text="Enabled",
                                                 command=lambda: self.cb_check(),
                                                 variable=self.controller.chbox_val[i])
@@ -68,7 +65,6 @@ class ImportPage(tk.Frame):
                         return
                 else:
                     self.controller.sens_val[i] = 1
-
         except Exception as e:
             tk.messagebox.showerror(title="Error", message=str(e))
             return
@@ -79,6 +75,7 @@ class ImportPage(tk.Frame):
             channels = read_csv_data(filename)
             self.controller.channels_volt = channels
 
+            # Calculate enabled channels from user inputted sensitivity
             self.controller.channels_accel = channels[:, 0]
             for j in range(1, len(channels[0])):
                 if self.controller.chbox_val[j - 1].get() == 1:
@@ -90,5 +87,20 @@ class ImportPage(tk.Frame):
             tk.messagebox.showerror(title="Error", message=str(e))
             return
 
-        self.controller.bool_imported = True
-        self.destroy()
+        # Plot Voltage vs Time Graph
+        fig1, ax1 = plt.subplots()
+        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1:10])
+        ax1.set(xlabel='Time (ms)', ylabel='Voltage (mV)',
+                title='Voltage vs Time')
+        ax1.grid()
+        fig1.show()
+
+        # Plot Acceleration vs Time
+        fig1, ax1 = plt.subplots()
+        ax1.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, 1:10])
+        ax1.set(xlabel='Time (ms)', ylabel='Acceleration (g)',
+                title='Acceleration vs Time')
+        ax1.grid()
+        fig1.show()
+
+        self.controller.change_page(self.controller.Page2)

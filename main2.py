@@ -1,13 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
-
 import numpy as np
-
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
-
 from acceldata import AccelData
 from srs import Srs
 from utilities import save_file, write2txt
