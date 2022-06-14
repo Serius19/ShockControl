@@ -116,7 +116,7 @@ class Srs(tk.Toplevel):
         # Calculate omega values from frequency
         omega = 2*np.pi*self.controller.fn
 
-        # Calculate SRS array and store in controller variable
+        # Calculate SRS array and store in the controller variable
         self.controller.a_abs = self.srs_accel(num_fn, omega, damp)
 
         fig, ax = plt.subplots()
