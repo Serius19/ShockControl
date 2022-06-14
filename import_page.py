@@ -104,3 +104,5 @@ class ImportPage(tk.Frame):
         fig1.show()
 
         self.controller.change_page(self.controller.Page2)
+
+
