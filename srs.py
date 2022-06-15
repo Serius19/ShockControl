@@ -137,8 +137,11 @@ class Srs(tk.Toplevel):
         dt = self.controller.channels_accel[1, 0] - self.controller.channels_accel[0, 0]
 
         if self.cb_val.get() == 1:
-            range_arr = np.where(np.logical_and(self.controller.channels_accel[:, 0] >= self.int_t1, self.controller.channels_accel[:, 0] <= self.int_t2))
-            self.arr = self.controller.channels_accel[range_arr[0]:range_arr[-1], 1]
+            range_arr = np.array(np.where(np.logical_and(self.controller.channels_accel[:, 0] >= self.int_t1, self.controller.channels_accel[:, 0] <= self.int_t2)))
+            print(range_arr)
+            print(range_arr[0, 0])
+            print(range_arr[0, -1])
+            self.arr = self.controller.channels_accel[range_arr[0, 0]:range_arr[0, -1], 1]
         else:
             self.arr = self.controller.channels_accel[:, 1]
 

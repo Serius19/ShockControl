@@ -32,18 +32,20 @@ class ImportPage(tk.Frame):
             tk.Label(self, text="Sensitivity:").grid(column=2, row=i + 1, padx=5, pady=5)
             tk.Label(self, text="mV/g").grid(column=4, row=i + 1, padx=5, pady=5)
             self.checkboxes[i] = tk.Checkbutton(self, fg="green", text="Enabled",
-                                                command=lambda: self.cb_check(),
+                                                command=self.cb_check,
                                                 variable=self.controller.chbox_val[i])
             self.checkboxes[i].grid(column=1, row=i + 1, padx=5, pady=5)
 
         self.checkboxes[0].select()
-        self.checkboxes[1].select()
         self.cb_check()
 
         # ROW 5 ________________________________________
         crow = 5
         self.btn_fileSel = tk.Button(self, command=self.file_select, text="File Select", padx=5, pady=5)
-        self.btn_fileSel.grid(column=1, columnspan=3, row=crow, padx=5, pady=5)
+        self.btn_fileSel.grid(column=1, columnspan=2, row=crow, padx=5, pady=5)
+
+        self.btn_quit = tk.Button(self, command=self.exit_page, text="Quit", padx=5, pady=5)
+        self.btn_quit.grid(column=3, columnspan=2, row=crow, padx=5, pady=5)
 
     def cb_check(self):
         for i in range(0, 4):
@@ -89,7 +91,7 @@ class ImportPage(tk.Frame):
 
         # Plot Voltage vs Time Graph
         fig1, ax1 = plt.subplots()
-        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1:10])
+        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1::])
         ax1.set(xlabel='Time (ms)', ylabel='Voltage (mV)',
                 title='Voltage vs Time')
         ax1.grid()
@@ -97,7 +99,7 @@ class ImportPage(tk.Frame):
 
         # Plot Acceleration vs Time
         fig1, ax1 = plt.subplots()
-        ax1.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, 1:10])
+        ax1.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, 1::])
         ax1.set(xlabel='Time (ms)', ylabel='Acceleration (g)',
                 title='Acceleration vs Time')
         ax1.grid()
@@ -105,4 +107,5 @@ class ImportPage(tk.Frame):
 
         self.controller.change_page(self.controller.Page2)
 
-
+    def exit_page(self):
+        self.controller.destroy()

@@ -17,7 +17,7 @@ class App(tk.Tk):
         # Checkbox values from AccelData()
         self.chbox_val = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
         # Sensitivity values from AccelData()
-        self.sens_val = np.array((10, 10, 0, 0), dtype=float)
+        self.sens_val = np.array((10, 10, 10, 10), dtype=float)
         # time and voltage from oscilloscope
         self.channels_volt = []
         # time and channels from oscilloscope
