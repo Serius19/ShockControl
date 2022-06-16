@@ -14,17 +14,20 @@ class App(tk.Tk):
         #############################
         # Variable Controller
         #############################
-        # Checkbox values from AccelData()
+        # Checkbox values from import_page()
         self.chbox_val = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
-        # Sensitivity values from AccelData()
+        # Sensitivity values from import_page()
         self.sens_val = np.array((10, 10, 10, 10), dtype=float)
-        # time and voltage from oscilloscope
+        # time and voltage from import_page()
         self.channels_volt = []
-        # time and channels from oscilloscope
+        # time and channels from import_page()
         self.channels_accel = []
-        # frequency array
+        # frequency array from srs.py
         self.fn = []
+        # Acceleration array from srs.py
         self.a_abs = []
+        # table info for export page
+        self.table_info = {'path': str(), 'dt': float(), 'samples': int()}
 
         #############################
         # Frame Controller

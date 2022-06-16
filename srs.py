@@ -69,7 +69,7 @@ class Srs(tk.Toplevel):
         crow = 6
         self.cb_val = tk.IntVar()
         checkbox = tk.Checkbutton(win, text="Enable Limits",
-                                  command=lambda: self.cb_check(),
+                                  command=self.cb_check,
                                   variable=self.cb_val)
         checkbox.grid(row=crow, column=0, columnspan=2, padx=5, pady=(5, 0))
 
@@ -138,9 +138,6 @@ class Srs(tk.Toplevel):
 
         if self.cb_val.get() == 1:
             range_arr = np.array(np.where(np.logical_and(self.controller.channels_accel[:, 0] >= self.int_t1, self.controller.channels_accel[:, 0] <= self.int_t2)))
-            print(range_arr)
-            print(range_arr[0, 0])
-            print(range_arr[0, -1])
             self.arr = self.controller.channels_accel[range_arr[0, 0]:range_arr[0, -1], 1]
         else:
             self.arr = self.controller.channels_accel[:, 1]

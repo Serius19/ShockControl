@@ -1,7 +1,8 @@
+import os
 import tkinter as tk
 from tkinter import messagebox
 import numpy as np
-from matplotlib import pyplot as plt
+from export_page import ExportPage
 from utilities import read_csv_file, read_csv_data
 
 
@@ -11,18 +12,18 @@ class ImportPage(tk.Frame):
         self.parent = parent
         self.controller = controller
 
+        self.entries = [tk.Entry(), tk.Entry(), tk.Entry(), tk.Entry()]
+        self.checkboxes = [tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton()]
+
         self.initialize_widgets()
 
     def initialize_widgets(self):
         # ROW 0 ________________________________________
         crow = 0
-        self.lblImport = tk.Label(self, text="Accelerometer parameters:")
-        self.lblImport.grid(column=0, columnspan=5, row=crow, padx=5, pady=2)
+        btn_file_select = tk.Button(self, padx=5, pady=5, command=self.file_select, text="Select CSV File")
+        btn_file_select.grid(column=0, columnspan=5, row=crow, padx=5, pady=2)
 
         # ROW 1-4 ______________________________________
-        self.entries = [tk.Entry(), tk.Entry(), tk.Entry(), tk.Entry()]
-        self.checkboxes = [tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton()]
-
         for i in range(0, 4):
             lbl_ch = tk.Label(self, text="CH" + str(i + 1) + ":")
             lbl_ch.grid(column=0, row=i + 1, padx=5, pady=5)
@@ -31,21 +32,19 @@ class ImportPage(tk.Frame):
             self.entries[i].insert(-1, str(self.controller.sens_val[i]))
             tk.Label(self, text="Sensitivity:").grid(column=2, row=i + 1, padx=5, pady=5)
             tk.Label(self, text="mV/g").grid(column=4, row=i + 1, padx=5, pady=5)
-            self.checkboxes[i] = tk.Checkbutton(self, fg="green", text="Enabled",
-                                                command=self.cb_check,
+            self.checkboxes[i] = tk.Checkbutton(self, fg="red", text="Disabled",
+                                                command=self.cb_check, state="normal",
                                                 variable=self.controller.chbox_val[i])
             self.checkboxes[i].grid(column=1, row=i + 1, padx=5, pady=5)
 
-        self.checkboxes[0].select()
-        self.cb_check()
 
         # ROW 5 ________________________________________
         crow = 5
-        self.btn_fileSel = tk.Button(self, command=self.file_select, text="File Select", padx=5, pady=5)
-        self.btn_fileSel.grid(column=1, columnspan=2, row=crow, padx=5, pady=5)
+        btn_import = tk.Button(self, command=self.file_select, text="Import", padx=5, pady=5)
+        btn_import.grid(column=1, columnspan=2, row=crow, padx=5, pady=5)
 
-        self.btn_quit = tk.Button(self, command=self.exit_page, text="Quit", padx=5, pady=5)
-        self.btn_quit.grid(column=3, columnspan=2, row=crow, padx=5, pady=5)
+        btn_quit = tk.Button(self, command=self.exit_page, text="Quit", padx=5, pady=5)
+        btn_quit.grid(column=3, columnspan=2, row=crow, padx=5, pady=5)
 
     def cb_check(self):
         for i in range(0, 4):
@@ -73,6 +72,8 @@ class ImportPage(tk.Frame):
 
         try:
             filename = read_csv_file()
+            head_tail = os.path.split(filename.name)
+            self.controller.table_info['path'] = head_tail[1]
 
             channels = read_csv_data(filename)
             self.controller.channels_volt = channels
@@ -81,30 +82,18 @@ class ImportPage(tk.Frame):
             self.controller.channels_accel = channels[:, 0]
             for j in range(1, len(channels[0])):
                 if self.controller.chbox_val[j - 1].get() == 1:
-                    temp = channels[:, j] / np.power(self.controller.sens_val[j - 1], -2)
+                    temp = channels[:, j] * 1000 / self.controller.sens_val[j - 1]
                     self.controller.channels_accel = np.vstack((self.controller.channels_accel, temp))
             self.controller.channels_accel = np.transpose(self.controller.channels_accel)
+
+            self.controller.table_info['dt'] = self.controller.channels_accel[1, 0] - self.controller.channels_accel[0, 0]
+            self.controller.table_info['samples'] = len(self.controller.channels_accel[:, 0])
 
         except Exception as e:
             tk.messagebox.showerror(title="Error", message=str(e))
             return
 
-        # Plot Voltage vs Time Graph
-        fig1, ax1 = plt.subplots()
-        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1::])
-        ax1.set(xlabel='Time (ms)', ylabel='Voltage (mV)',
-                title='Voltage vs Time')
-        ax1.grid()
-        fig1.show()
-
-        # Plot Acceleration vs Time
-        fig1, ax1 = plt.subplots()
-        ax1.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, 1::])
-        ax1.set(xlabel='Time (ms)', ylabel='Acceleration (g)',
-                title='Acceleration vs Time')
-        ax1.grid()
-        fig1.show()
-
+        ExportPage.update_table(self.controller.Page2)
         self.controller.change_page(self.controller.Page2)
 
     def exit_page(self):
