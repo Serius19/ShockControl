@@ -13,6 +13,7 @@ class ExportPage(tk.Frame):
         self.controller = controller
 
         self.initialize_widgets()
+        self.update_table()
 
     def initialize_widgets(self):
         # ROW 0 ________________________________________
@@ -75,7 +76,7 @@ class ExportPage(tk.Frame):
         tk.messagebox.showinfo(title="Info", message="SRS exported successfully!")
 
     def import_nf_click(self):
-        self.controller.change_page(self.controller.Page1)
+        self.controller.change_page(self.controller.Page_2)
 
     def view_volt_click(self):
         # Plot Voltage vs Time Graph

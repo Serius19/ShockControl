@@ -28,14 +28,16 @@ def read_csv_data(filename):
     if len(df.columns) == 4:
         ch1_volt = df.Volt.to_numpy()
         arr = np.stack((t, ch1_volt), axis=1)
-        return arr
+        ch_num = 1
+        return arr, ch_num
 
     elif len(df.columns) == 5:
         df.columns = ["Sequence", "Volt", "Volt2", "NAN", "NAN"]
         ch1_volt = df.Volt.to_numpy()
         ch2_volt = df.Volt2.to_numpy(dtype=float)
         arr = np.stack((t, ch1_volt, ch2_volt), axis=1)
-        return arr
+        ch_num = 2
+        return arr, ch_num
 
     elif len(df.columns) == 6:
         df.columns = ["Sequence", "Volt", "Volt2", "Volt3", "NAN", "NAN"]
@@ -43,7 +45,8 @@ def read_csv_data(filename):
         ch2_volt = df.Volt2.to_numpy(dtype=float)
         ch3_volt = df.Volt3.to_numpy(dtype=float)
         arr = np.stack((t, ch1_volt, ch2_volt, ch3_volt), axis=1)
-        return arr
+        ch_num = 3
+        return arr, ch_num
 
     elif len(df.columns) == 7:
         df.columns = ["Sequence", "Volt", "Volt2", "Volt3", "Volt4", "NAN", "NAN"]
@@ -52,7 +55,8 @@ def read_csv_data(filename):
         ch3_volt = df.Volt3.to_numpy(dtype=float)
         ch4_volt = df.Volt4.to_numpy(dtype=float)
         arr = np.stack((t, ch1_volt, ch2_volt, ch3_volt, ch4_volt), axis=1)
-        return arr
+        ch_num = 4
+        return arr, ch_num
 
 
 def save_file():

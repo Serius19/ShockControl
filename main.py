@@ -1,5 +1,6 @@
 import tkinter as tk
 import numpy as np
+from main_page import MainPage
 from import_page import ImportPage
 from export_page import ExportPage
 
@@ -9,7 +10,7 @@ class App(tk.Tk):
         tk.Tk.__init__(self)
         # configure root window
         self.title("Shock Control System")
-        self.resizable(False, False)
+        self.resizable(True, True)
 
         #############################
         # Variable Controller
@@ -27,25 +28,33 @@ class App(tk.Tk):
         # Acceleration array from srs.py
         self.a_abs = []
         # table info for export page
-        self.table_info = {'path': str(), 'dt': float(), 'samples': int()}
+        self.table_info = {'path': str(), 'dt': float(), 'samples': int(), 'ch_num': int(0)}
 
         #############################
         # Frame Controller
         #############################
-        container = tk.Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
+        self.container = tk.Frame(self)
+        self.container.pack(side="top", fill="both", expand=True)
+        self.container.grid_rowconfigure(0, weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
 
-        self.Page1 = ImportPage(parent=container, controller=self)
-        self.Page2 = ExportPage(parent=container, controller=self)
-        self.Page1.grid(row=0, column=0, sticky="nsew")
-        self.Page2.grid(row=0, column=0, sticky="nsew")
-        self.Page1.tkraise()
+        self.Page_1 = MainPage(parent=self.container, controller=self)
+        self.Page_1.grid(row=0, column=0, sticky="nsew")
 
     @staticmethod
     def change_page(page):
         page.tkraise()
+
+    def srs_select(self):
+        self.Page_1.destroy()
+        self.Page_2 = ImportPage(parent=self.container, controller=self)
+        self.Page_2.grid(row=0, column=0, sticky="nsew")
+        self.Page_2.tkraise()
+
+    def ch_imported(self):
+        self.Page_2.destroy()
+        self.Page_3 = ExportPage(parent=self.container, controller=self)
+        self.Page_3.grid(row=0, column=0, sticky="nsew")
 
 
 if __name__ == "__main__":
