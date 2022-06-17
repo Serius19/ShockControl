@@ -1,6 +1,7 @@
 import tkinter as tk
 import numpy as np
 from scipy.signal import lfilter
+from tkinter import messagebox
 import matplotlib.pyplot as plt
 
 
@@ -81,14 +82,14 @@ class Srs(tk.Toplevel):
         # ROW 8 ________________________________________
         crow = 8
         self.t1 = tk.StringVar()
-        self.t1.set("0")
         self.ent_t1 = tk.Entry(win, width=7, state="disabled", textvariable=self.t1)
         self.ent_t1.grid(row=crow, column=0, padx=5, pady=(2, 10))
 
         self.t2 = tk.StringVar()
-        self.t2.set(str(self.controller.channels_accel[-1, 0]))
         self.ent_t2 = tk.Entry(win, width=7, state="disabled", textvariable=self.t2)
         self.ent_t2.grid(row=crow, column=1, padx=5, pady=(2, 10))
+
+        self.reset_limits()
 
         # ROW 9 ________________________________________
         crow = 9
@@ -102,6 +103,9 @@ class Srs(tk.Toplevel):
         int_f2 = float(self.f2.get())
         self.int_t1 = float(self.t1.get())
         self.int_t2 = float(self.t2.get())
+
+        if self.int_t1 < self.controller.channels_accel[0, 0] or self.int_t2 > self.controller.channels_accel[-1, 0]:
+            tk.messagebox.showerror(title="Error", message="Limit outside of data range, resetting to default")
 
         # Calculate frequency array depending on user selected octave range
         num, dem = self.Octr.get().split("/")
@@ -119,6 +123,11 @@ class Srs(tk.Toplevel):
         # Calculate SRS array and store in the controller variable
         self.controller.a_abs = self.srs_accel(num_fn, omega, damp)
 
+        self.plot_srs(int_f1, int_f2)
+
+        self.destroy()
+
+    def plot_srs(self, int_f1, int_f2):
         fig, ax = plt.subplots()
         ax.plot(self.controller.fn, self.controller.a_abs)
         ax.set(xlabel='Frequency (Hz)', ylabel='Acceleration (g)',
@@ -127,8 +136,6 @@ class Srs(tk.Toplevel):
         ax.set_xlim(int_f1, int_f2)
         ax.grid()
         fig.show()
-
-        self.destroy()
 
     def srs_accel(self, num_fn, omega, damp):
         a_abs = np.zeros(num_fn, dtype=float)
@@ -171,3 +178,8 @@ class Srs(tk.Toplevel):
         else:
             self.ent_t1.config(state="disabled")
             self.ent_t2.config(state="disabled")
+            self.reset_limits()
+
+    def reset_limits(self):
+        self.t1.set("0")
+        self.t2.set(str(round(self.controller.channels_accel[-1, 0], 5)))

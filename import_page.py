@@ -1,9 +1,6 @@
-import os
 import tkinter as tk
 from tkinter import messagebox
 import numpy as np
-from export_page import ExportPage
-from utilities import read_csv_file, read_csv_data
 
 
 class ImportPage(tk.Frame):
@@ -25,7 +22,7 @@ class ImportPage(tk.Frame):
         crow = 0
         tk.Label(self, padx=5, pady=5, text=message, font="Helvetica 14").grid(column=0, columnspan=5, row=crow, padx=5, pady=5)
 
-        # ROW 1-4 ______________________________________
+        # ROW MID ______________________________________
         for i in range(0, self.controller.table_info['ch_num']):
             lbl_ch = tk.Label(self, text="CH" + str(i + 1) + ":")
             lbl_ch.grid(column=0, row=i + 1, padx=5, pady=5)
@@ -43,9 +40,9 @@ class ImportPage(tk.Frame):
         self.checkboxes[0].select()
         self.cb_check()
 
-        # ROW 5 ________________________________________
+        # ROW END ________________________________________
         crow = i+2
-        btn_import = tk.Button(self, width=10, command=self.file_select, text="Import", padx=5, pady=5)
+        btn_import = tk.Button(self, width=10, command=self.import_file, text="Import", padx=5, pady=5)
         btn_import.grid(column=1, row=crow, padx=5, pady=5)
 
         btn_quit = tk.Button(self, width=10, command=self.exit_page, text="Quit", padx=5, pady=5)
@@ -60,7 +57,13 @@ class ImportPage(tk.Frame):
                 self.checkboxes[i].config(fg="red", text="Disabled")
                 self.entries[i].config(state="disabled")
 
-    def file_select(self):
+    def import_file(self):
+        # Iterate over checkbox intVar() to int()
+        self.controller.chbox_int = [e.get() for e in self.controller.chbox_val]
+        if all(a == 0 for a in self.controller.chbox_int):
+            tk.messagebox.showerror(title="Error", message="At least 1 Channel must be enabled")
+            return
+
         try:
             for i in range(0, self.controller.table_info['ch_num']):
                 if self.controller.chbox_val[i].get() == 1:
@@ -88,7 +91,9 @@ class ImportPage(tk.Frame):
             tk.messagebox.showerror(title="Error", message=str(e))
             return
 
-        self.controller.ch_imported()
+        # Open export page and destroy self
+        self.controller.page_3_open()
+        self.destroy()
 
     def exit_page(self):
         self.controller.destroy()

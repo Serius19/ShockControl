@@ -49,7 +49,9 @@ class MainPage(tk.Frame):
             self.controller.table_info['path'] = head_tail[1]
             self.controller.channels_volt, self.controller.table_info['ch_num'] = read_csv_data(filename)
 
-            self.controller.srs_select()
+            # Open import page and destroy self
+            self.controller.page_2_open()
+            self.destroy()
 
         except Exception as e:
             tk.messagebox.showerror(title="Error", message=str(e))

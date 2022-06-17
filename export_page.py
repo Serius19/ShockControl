@@ -76,7 +76,8 @@ class ExportPage(tk.Frame):
         tk.messagebox.showinfo(title="Info", message="SRS exported successfully!")
 
     def import_nf_click(self):
-        self.controller.change_page(self.controller.Page_2)
+        self.controller.page_1_open()
+        self.destroy()
 
     def view_volt_click(self):
         # Plot Voltage vs Time Graph

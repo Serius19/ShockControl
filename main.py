@@ -15,8 +15,10 @@ class App(tk.Tk):
         #############################
         # Variable Controller
         #############################
-        # Checkbox values from import_page()
+        # Checkbox IntVar() values from import_page()
         self.chbox_val = [tk.IntVar(), tk.IntVar(), tk.IntVar(), tk.IntVar()]
+        # Checkbox Int values from import_page()
+        self.chbox_int = [int(), int(), int(), int()]
         # Sensitivity values from import_page()
         self.sens_val = np.array((10, 10, 10, 10), dtype=float)
         # time and voltage from import_page()
@@ -41,18 +43,15 @@ class App(tk.Tk):
         self.Page_1 = MainPage(parent=self.container, controller=self)
         self.Page_1.grid(row=0, column=0, sticky="nsew")
 
-    @staticmethod
-    def change_page(page):
-        page.tkraise()
+    def page_1_open(self):
+        self.Page_1 = MainPage(parent=self.container, controller=self)
+        self.Page_1.grid(row=0, column=0, sticky="nsew")
 
-    def srs_select(self):
-        self.Page_1.destroy()
+    def page_2_open(self):
         self.Page_2 = ImportPage(parent=self.container, controller=self)
         self.Page_2.grid(row=0, column=0, sticky="nsew")
-        self.Page_2.tkraise()
 
-    def ch_imported(self):
-        self.Page_2.destroy()
+    def page_3_open(self):
         self.Page_3 = ExportPage(parent=self.container, controller=self)
         self.Page_3.grid(row=0, column=0, sticky="nsew")
 
