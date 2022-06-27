@@ -25,12 +25,15 @@ class App(tk.Tk):
         self.channels_volt = []
         # time and channels from import_page()
         self.channels_accel = []
+        #Filter array from Lowpassfilt
+        self.channels_filt = []
         # frequency array from srs.py
         self.fn = []
         # Acceleration array from srs.py
         self.a_abs = []
         # table info for export page
-        self.table_info = {'path': str(), 'dt': float(), 'samples': int(), 'ch_num': int(0)}
+        self.table_info = {'path': str(), 'dt': float(), 'sr': float(), 'samples': int(), 'ch_num': int(0)}
+
 
         #############################
         # Frame Controller

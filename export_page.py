@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from utilities import save_file, write2txt
 from srs import Srs
+from filtering import LowpassFilt
 
 
 class ExportPage(tk.Frame):
@@ -39,18 +40,24 @@ class ExportPage(tk.Frame):
 
         # ROW 3______________________________________
         crow = 3
+        self.btn_filter = tk.Button(self, state="normal", command=self.filter_click, text="Filter Data",
+                               padx=5, pady=5, width=12)
+        self.btn_filter.grid(row=crow, column=0, padx=10, pady=5)
+
+        # ROW 4______________________________________
+        crow = 4
         self.btn_export_time = tk.Button(self, state="normal", command=self.export_txt_click, text="Export Time",
                                          padx=5, pady=5, width=12)
         self.btn_export_time.grid(row=crow, column=0, padx=10, pady=5)
 
-        # ROW 4______________________________________
-        crow = 4
+        # ROW 5______________________________________
+        crow = 5
         btn_srs = tk.Button(self, state="normal", command=self.srs_click, text="SRS Calculate",
                                  padx=5, pady=5, width=12)
         btn_srs.grid(row=crow, column=0, padx=10, pady=5)
 
-        # ROW 5______________________________________
-        crow = 5
+        # ROW 6______________________________________
+        crow = 6
         self.btn_export_srs = tk.Button(self, state="disabled", command=self.export_srs_click, text="Export SRS",
                                         padx=5, pady=5, width=12)
         self.btn_export_srs.grid(row=crow, column=0, padx=10, pady=5)
@@ -82,8 +89,8 @@ class ExportPage(tk.Frame):
     def view_volt_click(self):
         # Plot Voltage vs Time Graph
         fig1, ax1 = plt.subplots()
-        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1::])
-        ax1.set(xlabel='Time (s)', ylabel='Voltage (V)',
+        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1::]*1000)
+        ax1.set(xlabel='Time (s)', ylabel='Voltage (mV)',
                 title='Voltage vs Time')
         ax1.grid()
         fig1.show()
@@ -97,11 +104,16 @@ class ExportPage(tk.Frame):
         ax2.grid()
         fig2.show()
 
+    def filter_click(self):
+        filt_win = LowpassFilt(self, self.controller)
+        self.wait_window(filt_win)
+
     def update_table(self):
         self.txt_info.delete('1.0', tk.END)
         message = (
             f"Imported file: {self.controller.table_info['path']} \n"
             f"Time increment: {self.controller.table_info['dt']} seconds\n"
+            f"Sample rate: {self.controller.table_info['sr']} Hz\n"
             f"Number of samples: {self.controller.table_info['samples']}\n"
                    )
         self.txt_info.insert('end', message)

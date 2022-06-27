@@ -11,6 +11,7 @@ class ImportPage(tk.Frame):
 
         self.entries = [tk.Entry(), tk.Entry(), tk.Entry(), tk.Entry()]
         self.checkboxes = [tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton(), tk.Checkbutton()]
+        self.channels = []
 
         self.initialize_widgets()
 
@@ -76,15 +77,15 @@ class ImportPage(tk.Frame):
                     self.controller.sens_val[i] = 1
 
             # Calculate enabled channels from user inputted sensitivity
-            channels = self.controller.channels_volt
-            self.controller.channels_accel = channels[:, 0]
+            self.controller.channels_accel = self.controller.channels_volt[:, 0]
             for j in range(0, self.controller.table_info['ch_num']):
                 if self.controller.chbox_val[j].get() == 1:
-                    channels[:, j+1] = channels[:, j+1] * 1000 / self.controller.sens_val[j]
-                    self.controller.channels_accel = np.vstack((self.controller.channels_accel, channels[:, j+1]))
+                    temp = self.controller.channels_volt[:, j+1] * 1000 / self.controller.sens_val[j]
+                    self.controller.channels_accel = np.vstack((self.controller.channels_accel, temp))
             self.controller.channels_accel = np.transpose(self.controller.channels_accel)
 
             self.controller.table_info['dt'] = self.controller.channels_accel[1, 0] - self.controller.channels_accel[0, 0]
+            self.controller.table_info['sr'] = 1 / self.controller.table_info['dt']
             self.controller.table_info['samples'] = len(self.controller.channels_accel[:, 0])
 
         except Exception as e:
