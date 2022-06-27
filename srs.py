@@ -182,4 +182,4 @@ class Srs(tk.Toplevel):
 
     def reset_limits(self):
         self.t1.set("0")
-        self.t2.set(str(round(self.controller.channels_accel[-1, 0], 5)))
+        self.t2.set(str(self.controller.channels_accel[-1, 0]))
