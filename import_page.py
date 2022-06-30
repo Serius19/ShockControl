@@ -37,8 +37,8 @@ class ImportPage(tk.Frame):
                                                 command=self.cb_check, state="normal",
                                                 variable=self.controller.chbox_val[i])
             self.checkboxes[i].grid(column=1, row=i + 1, padx=5, pady=5)
+            self.checkboxes[i].select()
 
-        self.checkboxes[0].select()
         self.cb_check()
 
         # ROW END ________________________________________

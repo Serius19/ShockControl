@@ -89,18 +89,25 @@ class ExportPage(tk.Frame):
     def view_volt_click(self):
         # Plot Voltage vs Time Graph
         fig1, ax1 = plt.subplots()
-        ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, 1::]*1000)
+
+        for i in range(1, len(self.controller.channels_volt[0, :])):
+            ax1.plot(self.controller.channels_volt[:, 0], self.controller.channels_volt[:, i]*1000, label=f"CH{i}")
+
         ax1.set(xlabel='Time (s)', ylabel='Voltage (mV)',
                 title='Voltage vs Time')
+        ax1.legend(loc="upper right")
         ax1.grid()
         fig1.show()
 
     def view_g_click(self):
         # Plot Acceleration vs Time
         fig2, ax2 = plt.subplots()
-        ax2.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, 1::])
+        for i in range(1, len(self.controller.channels_accel[0, :])):
+            ax2.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, i], label=f"CH{i}")
+
         ax2.set(xlabel='Time (s)', ylabel='Acceleration (g)',
                 title='Acceleration vs Time')
+        ax2.legend(loc="upper right")
         ax2.grid()
         fig2.show()
 

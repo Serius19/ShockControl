@@ -1,7 +1,6 @@
 import os
 import tkinter as tk
 from tkinter import messagebox
-import numpy as np
 from utilities import read_csv_file, read_csv_data
 
 

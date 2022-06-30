@@ -1,6 +1,7 @@
 import tkinter as tk
 import numpy as np
 from scipy import signal
+from scipy.fft import fft, fftfreq
 from tkinter import messagebox
 import matplotlib.pyplot as plt
 
@@ -63,13 +64,30 @@ class LowpassFilt(tk.Toplevel):
             self.controller.channels_filt = np.transpose(self.controller.channels_filt)
 
             # Plot filtered Acceleration vs Time
-            fig2, ax2 = plt.subplots()
-            ax2.plot(self.controller.channels_filt[:, 0], self.controller.channels_filt[:, 1::])
-            ax2
-            ax2.set(xlabel='Time (s)', ylabel='Acceleration (g)',
+            fig3, ax3 = plt.subplots()
+
+            for i in range(1, len(self.controller.channels_filt[0, :])):
+                ax3.plot(self.controller.channels_filt[:, 0], self.controller.channels_filt[:, i], label=f"CH{i}")
+
+            ax3.set(xlabel='Time (s)', ylabel='Acceleration (g)',
                     title=f"low-pass filter at {f_l} Hz, filtered Acceleration (g)")
-            ax2.grid()
-            fig2.show()
+            ax3.grid()
+            ax3.legend(loc="upper right")
+            fig3.show()
+
+
+            #TEST FOURIER CASE
+            N = len(self.controller.channels_accel[:, 1])
+            T = self.controller.table_info['dt']
+            fourier = fft(self.controller.channels_accel[:, 1])
+
+            freq = np.linspace(0.0, 1000, N//2)
+
+            fig4, ax4 = plt.subplots()
+            ax4.plot(freq, abs(fourier[:N//2]))
+            fig4.show()
+
+            self.destroy()
 
         except Exception as e:
             tk.messagebox.showerror(title="Error", message=str(e))
