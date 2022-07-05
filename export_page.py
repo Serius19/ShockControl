@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import numpy as np
 from matplotlib import pyplot as plt
-from utilities import save_file, write2txt
+from utilities import save_file, write2txt, fft
 from srs import Srs
 from filtering import LowpassFilt
 
@@ -24,7 +24,7 @@ class ExportPage(tk.Frame):
         btn_import_nf.grid(row=crow, column=0, padx=10, pady=5)
 
         self.txt_info = tk.Text(self, state="normal", height=7, width=30, padx=5, pady=5)
-        self.txt_info.grid(row=crow, rowspan=3, column=1, padx=(10, 2), pady=5)
+        self.txt_info.grid(row=crow, rowspan=3, column=1, columnspan=2, padx=(10, 2), pady=5)
 
         # ROW 1 ________________________________________
         crow = 1
@@ -41,8 +41,12 @@ class ExportPage(tk.Frame):
         # ROW 3______________________________________
         crow = 3
         self.btn_filter = tk.Button(self, state="normal", command=self.filter_click, text="Filter Data",
-                               padx=5, pady=5, width=12)
+                                    padx=5, pady=5, width=12)
         self.btn_filter.grid(row=crow, column=0, padx=10, pady=5)
+
+        self.btn_fft = tk.Button(self, state="disabled", command=self.fft_click, text="FFT",
+                                 padx=5, pady=5, width=12)
+        self.btn_fft.grid(row=crow, column=1, padx=10, pady=5, sticky=tk.W)
 
         # ROW 4______________________________________
         crow = 4
@@ -53,18 +57,16 @@ class ExportPage(tk.Frame):
         # ROW 5______________________________________
         crow = 5
         btn_srs = tk.Button(self, state="normal", command=self.srs_click, text="SRS Calculate",
-                                 padx=5, pady=5, width=12)
+                            padx=5, pady=5, width=12)
         btn_srs.grid(row=crow, column=0, padx=10, pady=5)
 
-        # ROW 6______________________________________
-        crow = 6
         self.btn_export_srs = tk.Button(self, state="disabled", command=self.export_srs_click, text="Export SRS",
                                         padx=5, pady=5, width=12)
-        self.btn_export_srs.grid(row=crow, column=0, padx=10, pady=5)
+        self.btn_export_srs.grid(row=crow, column=1, padx=10, pady=5, sticky=tk.W)
 
         btn_quit = tk.Button(self, state="normal", command=self.exit_page, text="Quit",
-                                        padx=5, pady=5, width=8)
-        btn_quit.grid(row=crow, column=1, padx=5, pady=5, sticky=tk.E)
+                             padx=5, pady=5, width=8)
+        btn_quit.grid(row=crow, column=2, padx=5, pady=5, sticky=tk.E)
 
     def export_txt_click(self):
         file = save_file()
@@ -102,6 +104,7 @@ class ExportPage(tk.Frame):
     def view_g_click(self):
         # Plot Acceleration vs Time
         fig2, ax2 = plt.subplots()
+
         for i in range(1, len(self.controller.channels_accel[0, :])):
             ax2.plot(self.controller.channels_accel[:, 0], self.controller.channels_accel[:, i], label=f"CH{i}")
 
@@ -114,6 +117,16 @@ class ExportPage(tk.Frame):
     def filter_click(self):
         filt_win = LowpassFilt(self, self.controller)
         self.wait_window(filt_win)
+        self.btn_fft.config(state="normal")
+
+    def fft_click(self):
+        n = self.controller.table_info['samples']
+        t = self.controller.table_info['dt']
+        fourier, fft_freq = fft(self.controller.channels_filt[:, 1], n, t)
+        fig4, ax4 = plt.subplots()
+        ax4.plot(fft_freq, abs(fourier) / n)
+        ax4.set_xlim(0, 1000)
+        fig4.show()
 
     def update_table(self):
         self.txt_info.delete('1.0', tk.END)

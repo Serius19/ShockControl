@@ -1,5 +1,6 @@
 from tkinter import filedialog as fd
 from tkinter import messagebox
+import scipy.fft
 import numpy as np
 import pandas as pd
 
@@ -76,3 +77,9 @@ def write2txt(file, a):
     except Exception as e:
         messagebox.showerror(title="Error", message=str(e))
         return
+
+
+def fft(data, n, t):
+    fourier = scipy.fft.rfft(data)
+    fft_freq = scipy.fft.rfftfreq(n, d=t)
+    return fourier, fft_freq

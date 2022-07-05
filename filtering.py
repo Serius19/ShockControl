@@ -1,7 +1,6 @@
 import tkinter as tk
 import numpy as np
 from scipy import signal
-from scipy.fft import fft, fftfreq
 from tkinter import messagebox
 import matplotlib.pyplot as plt
 
@@ -56,11 +55,10 @@ class LowpassFilt(tk.Toplevel):
 
             sos = signal.butter(4, f_l, 'low', fs=self.controller.table_info['sr'], output='sos')
 
-            self.controller.channels_filt = self.controller.channels_volt[:, 0]
-            for i in range(0, self.controller.table_info['ch_num']):
-                if self.controller.chbox_val[i].get() == 1:
-                    filtered = signal.sosfilt(sos, self.controller.channels_accel[:, i+1])
-                    self.controller.channels_filt = np.vstack((self.controller.channels_filt, filtered))
+            self.controller.channels_filt = self.controller.channels_accel[:, 0]
+            for i in range(1, len(self.controller.channels_accel[0, :])):
+                filtered = signal.sosfilt(sos, self.controller.channels_accel[:, i])
+                self.controller.channels_filt = np.vstack((self.controller.channels_filt, filtered))
             self.controller.channels_filt = np.transpose(self.controller.channels_filt)
 
             # Plot filtered Acceleration vs Time
@@ -74,18 +72,6 @@ class LowpassFilt(tk.Toplevel):
             ax3.grid()
             ax3.legend(loc="upper right")
             fig3.show()
-
-
-            #TEST FOURIER CASE
-            N = len(self.controller.channels_accel[:, 1])
-            T = self.controller.table_info['dt']
-            fourier = fft(self.controller.channels_accel[:, 1])
-
-            freq = np.linspace(0.0, 1000, N//2)
-
-            fig4, ax4 = plt.subplots()
-            ax4.plot(freq, abs(fourier[:N//2]))
-            fig4.show()
 
             self.destroy()
 

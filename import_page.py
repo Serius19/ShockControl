@@ -74,13 +74,14 @@ class ImportPage(tk.Frame):
                         tk.messagebox.showerror(title="Error", message="Sensitivity cannot be zero")
                         return
                 else:
-                    self.controller.sens_val[i] = 1
+                    self.controller.sens_val[i] = 10.0
 
             # Calculate enabled channels from user inputted sensitivity
             self.controller.channels_accel = self.controller.channels_volt[:, 0]
             for j in range(0, self.controller.table_info['ch_num']):
                 if self.controller.chbox_val[j].get() == 1:
-                    temp = self.controller.channels_volt[:, j+1] * 1000 / self.controller.sens_val[j]
+                    temp = self.controller.channels_volt[:, j+1] * 1000 / self.controller.sens_val[j]  # Convert from V to g
+                    temp = temp - np.mean(temp)  # Removes DC offset
                     self.controller.channels_accel = np.vstack((self.controller.channels_accel, temp))
             self.controller.channels_accel = np.transpose(self.controller.channels_accel)
 
